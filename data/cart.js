@@ -23,21 +23,52 @@ function saveToStorage(){
 }
 export function addToCart(productId){
     let matchingItem;
+    const addedMessageTimeouts = {};
+
 
     cart.forEach((cartItem) => {
         if(productId === cartItem.productId){
             matchingItem = cartItem;
         }
     });
+    
+    const quantitySelector = document.querySelector(
+        `.js-quantity-selector-${productId}`
+    )
+    const quantity = Number(quantitySelector.value);
+    // console.log(quantity);
+
     if (matchingItem){
-        matchingItem.quantity += 1;
+        // matchingItem.quantity += 1;
+        matchingItem.quantity += quantity;
     } else {
         cart.push({
             productId: productId,
-            quantity: 1,
+            // quantity: 1,
+            quantity: quantity,
             deliveryOptionsId: '1'
         });
     }
+
+
+    const addedMessage = document.querySelector(`.js-added-to-cart-${productId}`);
+    addedMessage.classList.add('added-to-cart-visible');
+    // setTimeout(() => {
+    //     addedMessage.classList.remove('added-to-cart-visible');
+    // }, 2000);
+
+    const previousTimeoutId = addedMessageTimeouts[productId];
+    if(previousTimeoutId){
+        clearTimeout(previousTimeoutId);
+    }
+
+    const timeoutId = setTimeout(() => {
+        addedMessage.classList.remove('added-to-cart-visible');
+    }, 2000);
+
+    addedMessageTimeouts[productId] = timeoutId;
+
+    // console.log(cart);
     saveToStorage();
 }
 
