@@ -1,4 +1,4 @@
-import {cart, removeFromCart, updateDeliveryOption} from '../../data/cart.js';
+import {cart, removeFromCart, updateDeliveryOption, calculateCartQuantity, updateQuantity} from '../../data/cart.js';
 import {products, gerProduct} from '../../data/products.js';
 import {formatCurrency} from '../utils/money.js';
 import {hello} from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
@@ -47,12 +47,19 @@ export function renderOrderSummary(){
                     <div class="product-quantity
                     js-product-quantity-${matchingProduct.id}">
                         <span>
-                        Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+                        Quantity: <span class="quantity-label js-quantity-label-${matchingProduct.id}">${cartItem.quantity}</span>
                         </span>
-                        <span class="update-quantity-link link-primary">
+                        <span class="update-quantity-link link-primary js-update-link"
+                            data-product-id="${matchingProduct.id}">
                         Update
                         </span>
-                        <span class="delete-quantity-link link-primary js-delete-link js-delete-link-${matchingProduct.id}" data-product-id = "${matchingProduct.id}">
+                        <input class="quantity-input js-quantity-input-${matchingProduct.id}">
+                        <span class="save-quantity-link link-primary js-save-link"
+                            data-product-id="${matchingProduct.id}">
+                            Save
+                        </span>
+                        <span class="delete-quantity-link link-primary js-delete-link js-delete-link-${matchingProduct.id}" 
+                            data-product-id = "${matchingProduct.id}">
                         Delete
                         </span>
                     </div>
@@ -110,10 +117,59 @@ export function renderOrderSummary(){
                 `.js-cart-item-container-${productId}`
             );
             container.remove();
-
+            updateCartQuantity();
             renderPaymentSummary();
         })
     });
+    // To display the number of item in the cart, for the header section.
+    function updateCartQuantity(){
+        let cartQuantity = calculateCartQuantity();
+
+        document.querySelector('.js-return-to-home-link').innerHTML = `${cartQuantity} items`;
+    }
+    updateCartQuantity();
+    
+    document.querySelectorAll('.js-update-link').forEach((link) => {
+        link.addEventListener('click', () => {
+            const productId = link.dataset.productId;
+            // console.log(productId);
+            const container = document.querySelector(`.js-cart-item-container-${productId}`);
+            container.classList.add('is-editing-quantity');
+        });
+    });
+
+    document.querySelectorAll('.js-save-link').forEach((link) => {
+        const productId = link.dataset.productId;
+        const quantityInput = document.querySelector(`.js-quantity-input-${productId}`);
+        link.addEventListener('click', () => {
+            handleUpdateQuantity(productId, quantityInput);
+            updateCartQuantity();
+            renderPaymentSummary();
+        });
+        quantityInput.addEventListener('keydown', (event) => {
+            if(event.key === 'Enter') {
+                handleUpdateQuantity(productId, quantityInput);
+                updateCartQuantity();
+                renderPaymentSummary();
+            }
+        })
+    })
+
+    function handleUpdateQuantity(productId, quantityInput){
+        // Receive quantity input
+        const newQuantity = Number(quantityInput.value);
+        if(newQuantity < 0 || newQuantity >= 1000){
+            alert('Quantity must be at least 0 and less than 1000');
+            return;
+        }
+        updateQuantity(productId, newQuantity);
+        // Click save then return to normal Update | Delete
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+        container.classList.remove('is-editing-quantity');
+        // Update the quantiy for the header and container in HTML
+        const quantityLabel = document.querySelector(`.js-quantity-label-${productId}`);
+        quantityLabel.innerHTML = newQuantity;
+    }
 
     document.querySelectorAll('.js-delivery-option').forEach((element) => {
         element.addEventListener('click', () => {
