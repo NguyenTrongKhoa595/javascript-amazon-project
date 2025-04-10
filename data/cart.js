@@ -1,3 +1,4 @@
+import { validDeliveryOption } from "./deliveryOptions.js";
 export let cart;
 
 loadFromStorage();
@@ -21,10 +22,8 @@ export function loadFromStorage(){
 function saveToStorage(){
     localStorage.setItem('cart', JSON.stringify(cart));
 }
-export function addToCart(productId){
+export function addToCart(productId, quantity){
     let matchingItem;
-    const addedMessageTimeouts = {};
-
 
     cart.forEach((cartItem) => {
         if(productId === cartItem.productId){
@@ -32,43 +31,16 @@ export function addToCart(productId){
         }
     });
     
-    const quantitySelector = document.querySelector(
-        `.js-quantity-selector-${productId}`
-    )
-    const quantity = Number(quantitySelector.value);
-    // console.log(quantity);
-
     if (matchingItem){
-        // matchingItem.quantity += 1;
         matchingItem.quantity += quantity;
     } else {
         cart.push({
             productId: productId,
-            // quantity: 1,
             quantity: quantity,
-            deliveryOptionsId: '1'
+            deliveryOptionId: '1'
         });
     }
 
-
-    const addedMessage = document.querySelector(`.js-added-to-cart-${productId}`);
-    addedMessage.classList.add('added-to-cart-visible');
-    // setTimeout(() => {
-    //     addedMessage.classList.remove('added-to-cart-visible');
-    // }, 2000);
-
-    const previousTimeoutId = addedMessageTimeouts[productId];
-    if(previousTimeoutId){
-        clearTimeout(previousTimeoutId);
-    }
-
-    const timeoutId = setTimeout(() => {
-        addedMessage.classList.remove('added-to-cart-visible');
-    }, 2000);
-
-    addedMessageTimeouts[productId] = timeoutId;
-
-    // console.log(cart);
     saveToStorage();
 }
 
@@ -93,6 +65,14 @@ export function updateDeliveryOption(productId, deliveryOptionId){
             matchingItem = cartItem;
         }
     });
+
+    if(!matchingItem) {
+        return;
+    }
+
+    if(!validDeliveryOption(deliveryOptionId)){
+        return;
+    }
 
     matchingItem.deliveryOptionId = deliveryOptionId;
 

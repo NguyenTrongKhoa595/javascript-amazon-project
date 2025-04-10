@@ -35,10 +35,10 @@ export function renderOrderSummary(){
                     src="${matchingProduct.image}">
 
                     <div class="cart-item-details">
-                    <div class="product-name">
+                    <div class="product-name js-product-name-${matchingProduct.id}">
                         ${matchingProduct.name}
                     </div>
-                    <div class="product-price">
+                    <div class="product-price js-product-price-${matchingProduct.id}">
                         ${matchingProduct.getPrice()}
                     </div>
                     <div class="product-quantity
@@ -80,11 +80,11 @@ export function renderOrderSummary(){
             const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${formatCurrency(deliveryOption.priceCents)} -`;
             const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
             html +=
-            `<div class="delivery-option js-delivery-option"
+            `<div class="delivery-option js-delivery-option js-delivery-option-${matchingProduct.id}-${deliveryOption.id}"
             data-product-id = "${matchingProduct.id}"
             data-delivery-option-id = "${deliveryOption.id}">
                 <input type="radio" ${isChecked ? 'checked' : ''}
-                    class="delivery-option-input"
+                    class="delivery-option-input js-delivery-option-input-${matchingProduct.id}-${deliveryOption.id}"
                     name="delivery-option-${matchingProduct.id}">
                 <div>
                     <div class="delivery-option-date">
@@ -110,19 +110,19 @@ export function renderOrderSummary(){
             //     `.js-cart-item-container-${productId}`
             // );
             // container.remove();
-            updateCartQuantity();
+            // updateCartQuantity();
             renderCheckoutHeader();
             renderOrderSummary();
             renderPaymentSummary();
         })
     });
     // To display the number of item in the cart, for the header section. (will update the quantity right on the spot)
-    function updateCartQuantity(){
-        let cartQuantity = calculateCartQuantity();
+    // function updateCartQuantity(){
+    //     let cartQuantity = calculateCartQuantity();
 
-        document.querySelector('.js-return-to-home-link').innerHTML = `${cartQuantity} items`;
-    }
-    updateCartQuantity();
+    //     document.querySelector('.js-return-to-home-link').innerHTML = `${cartQuantity} items`;
+    // }
+    // updateCartQuantity();
     
     document.querySelectorAll('.js-update-link').forEach((link) => {
         link.addEventListener('click', () => {
@@ -138,13 +138,17 @@ export function renderOrderSummary(){
         const quantityInput = document.querySelector(`.js-quantity-input-${productId}`);
         link.addEventListener('click', () => {
             handleUpdateQuantity(productId, quantityInput);
-            updateCartQuantity();
+            // updateCartQuantity();
+            renderCheckoutHeader();
+            renderOrderSummary();
             renderPaymentSummary();
         });
         quantityInput.addEventListener('keydown', (event) => {
             if(event.key === 'Enter') {
                 handleUpdateQuantity(productId, quantityInput);
-                updateCartQuantity();
+                // updateCartQuantity();
+                renderCheckoutHeader();
+                renderOrderSummary();
                 renderPaymentSummary();
             }
         })
@@ -170,6 +174,7 @@ export function renderOrderSummary(){
         element.addEventListener('click', () => {
             const {productId, deliveryOptionId} = element.dataset;
             updateDeliveryOption(productId, deliveryOptionId);
+            renderCheckoutHeader();
             renderOrderSummary();
             renderPaymentSummary();
         });
