@@ -11,7 +11,7 @@ export function gerProduct(productId){
   return matchingProduct;
 }
 
-class Product {
+export class Product {
   id;
   image;
   name;
@@ -39,7 +39,7 @@ class Product {
   }
 }
 
-class Clothing extends Product {
+export class Clothing extends Product {
   sizeChartLink;
   constructor(productDetails){
     super(productDetails);
@@ -48,10 +48,32 @@ class Clothing extends Product {
   extraInfoHTML(){
     // super.extraInfoHTML();
     return `
-      <a href = "${this.sizeChartLink}" traget = "_blank">
+      <a href = "${this.sizeChartLink}" target = "_blank">
         Size chart
       </a>
     `;
+  }
+}
+
+export class Appliance extends Product {
+  instructionsLink;
+  warrantyLink;
+
+  constructor(productDetails){
+    super(productDetails);
+    this.instructionsLink = productDetails.instructionsLink;
+    this.warrantyLink = productDetails.warrantyLink;
+  }
+
+  extraInfoHTML(){
+    return `
+      <a href = "${this.instructionsLink}" target = "_blank">
+        Instructions
+      </a>
+      <a href = "${this.warrantyLink}" target = "_blank">
+        Warranty
+      </a>
+    `
   }
 }
 
@@ -93,6 +115,8 @@ export function loadProductFetch() {
     products = productData.map((productDetails) => {
       if(productDetails.type === 'clothing') {
         return new Clothing(productDetails);
+      } else if(productDetails.type === 'appliance'){
+        return new Appliance(productDetails);
       }
       return new Product(productDetails);
     });
@@ -109,6 +133,7 @@ export function loadProductFetch() {
 })
 */
 
+
 export function loadProducts(fun){
   const xhr = new XMLHttpRequest();
 
@@ -116,6 +141,8 @@ export function loadProducts(fun){
     products = JSON.parse(xhr.response).map((productDetails) => {
       if(productDetails.type === 'clothing') {
         return new Clothing(productDetails);
+      } else if(productDetails.type === 'appliance'){
+        return new Appliance(productDetails);
       }
       return new Product(productDetails);
     });
