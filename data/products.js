@@ -133,7 +133,7 @@ export function loadProductFetch() {
 })
 */
 
-
+// Fun stand for funtion
 export function loadProducts(fun){
   const xhr = new XMLHttpRequest();
 

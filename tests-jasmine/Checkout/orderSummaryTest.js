@@ -12,6 +12,13 @@ describe('test suite: renderOrderSummary', () => {
         });
     });
 
+    /* 
+    // Alternative way for done()
+    beforeAll(async () => {
+        await loadProductFetch();
+        });
+    */
+
     beforeEach(() => {
         spyOn(localStorage, 'setItem');
         document.querySelector('.js-test-container').innerHTML = `
