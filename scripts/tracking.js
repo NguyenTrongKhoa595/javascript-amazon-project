@@ -12,8 +12,6 @@ async function loadPage() {
     const order = getOrder(orderId);
     const product = getProduct(productId);
 
-    console.log('orderId:', orderId);
-    console.log('order:', order);
     let productDetails;
     order.products.forEach((details) => {
         if(details.productId ===  product.id){
