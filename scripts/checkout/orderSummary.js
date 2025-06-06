@@ -8,7 +8,25 @@ import { renderPaymentSummary } from './paymentSummary.js';
 import { renderCheckoutHeader } from './checkoutHeader.js';
 
 export function renderOrderSummary(){
+    const summaryEl = document.querySelector('.js-order-summary');
 
+    /* ----------  EMPTY CART ---------- */
+    if (cart.length === 0) {
+        summaryEl.innerHTML = `
+        <div class="js-cart-summary cart-summary">
+            <div data-testid="empty-cart-message">
+                Your cart is empty.
+            </div>
+            <a
+                class="button-primary view-products-link" href="amazon.html" data-testid="view-products-link">
+                View products
+            </a>
+        </div>
+        `;
+        return;           // ← nothing else to render
+    }
+
+    /* ----------  NORMAL CART ---------- */
     let cartSummaryHTML = '';
 
     cart.forEach((cartItem) => {
@@ -100,7 +118,9 @@ export function renderOrderSummary(){
         return html;
     }
 
-    document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
+    // document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
+    summaryEl.innerHTML = cartSummaryHTML;
+
     document.querySelectorAll('.js-delete-link').forEach((link) => {
         link.addEventListener('click', () => {
             const productId = link.dataset.productId;
