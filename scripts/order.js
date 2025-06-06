@@ -3,6 +3,8 @@ import {orders} from '../data/order.js';
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import formatCurrency from './utils/money.js';
 import { addToCart } from '../data/cart.js';
+import { renderCheckoutHeader } from './checkout/checkoutHeader.js';
+import { calculateCartQuantity } from '../data/cart.js';
 
 async function loadPage() {
     await loadProductFetch();
@@ -95,10 +97,17 @@ async function loadPage() {
                 <span class="buy-again-message">Buy it again</span>
                 `; 
             }, 1000);
+            updateCartQuantity();
             loadPage();
         })
     })
 }
+function updateCartQuantity(){
+    let cartQuantity = calculateCartQuantity();
 
+    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+}
+
+updateCartQuantity();
 loadPage();
 
