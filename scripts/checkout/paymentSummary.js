@@ -65,7 +65,7 @@ export function renderPaymentSummary(){
             </div>
             </div>
 
-            <button class="place-order-button button-primary js-place-order">
+            <button class="place-order-button button-primary js-place-order ${cart.length === 0 ? 'payment-buttons-disabled' : ''}">
             Place your order
             </button>
     `;

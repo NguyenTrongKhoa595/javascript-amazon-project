@@ -236,3 +236,8 @@
     text-decoration: none;
     margin-top: 10px;
 }
+
+.payment-summary .payment-buttons-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
